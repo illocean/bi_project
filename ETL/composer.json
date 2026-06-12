@@ -1,0 +1,11 @@
+{
+    "name": "bi/etl",
+    "require": {
+        "illuminate/database": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Models\\": "models/"
+        }
+    }
+}
