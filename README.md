@@ -18,13 +18,20 @@ flowchart LR
 
 ## The Five BI Questions
 
-| # | Question | BI Essence | Chart |
-|---|----------|-----------|-------|
+| # | Question | BI Essence | Chart Type |
+|---|----------|-----------|------------|
 | A | Which city is the best market for sales? | Geographic market analysis | Bar |
-| B | Which product has the highest sales? | Product performance analysis | Bar |
-| C | Which office provides the best sales support? | Organizational performance | Doughnut |
-| D | Which customer generates the highest revenue? | Customer value analysis | Bar |
+| B | Which product has the highest sales? | Product performance analysis | Pie |
+| C | Which office provides the best sales support? | Organizational performance | Horizontal Bar |
+| D | Which customer generates the highest revenue? | Customer value analysis | Doughnut |
 | E | Which year/month had the highest sales volume? | Temporal trend analysis | Line |
+
+Each chart type is unique to best represent its data.
+
+## Data Coverage
+
+- **2025:** 12 orders (one per month) for year-over-year baseline
+- **2026:** 48 orders (3 per month, Jan–Dec) for seasonal trend analysis
 
 ## Quick Start
 
@@ -37,6 +44,7 @@ mysql -u root -p1234 < ETL/populate_bi_project.sql
 # 2. Start the dashboard
 cd dashboard
 composer install
+php artisan filament:assets
 php artisan serve
 # Visit http://localhost:8000/admin
 ```

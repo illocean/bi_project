@@ -6,7 +6,6 @@ Filament v5 dashboard visualizing the `bi_project` star schema. Answers five BI 
 
 ```bash
 composer install
-php artisan migrate
 php artisan filament:assets
 php artisan serve
 # Visit http://localhost:8000/admin
@@ -33,9 +32,9 @@ block-beta
     block:charts:4
         columns 1
         A["A. Best Market by City — Bar Chart"]
-        B["B. Highest Sales by Product — Bar Chart"]
-        C["C. Best Office Support — Doughnut Chart"]
-        D["D. Top Customer Revenue — Bar Chart"]
+        B["B. Highest Sales by Product — Pie Chart"]
+        C["C. Best Office Support — Horizontal Bar Chart"]
+        D["D. Top Customer Revenue — Doughnut Chart"]
         E["E. Sales Volume Over Time — Line Chart"]
     end
 
@@ -59,9 +58,9 @@ app/Filament/
 ├── Widgets/
 │   ├── BiStatsOverviewWidget.php   # 4 KPI stat cards
 │   ├── BestCityMarketWidget.php    # A: Bar — sales by city (filter: country)
-│   ├── HighestProductSalesWidget.php # B: Bar — sales by product (filter: product line)
-│   ├── BestOfficeSupportWidget.php # C: Doughnut — sales by office
-│   ├── TopCustomerWidget.php       # D: Bar — sales by customer (filter: country)
+│   ├── HighestProductSalesWidget.php # B: Pie — sales by product (filter: product line)
+│   ├── BestOfficeSupportWidget.php # C: Horizontal Bar — sales by office
+│   ├── TopCustomerWidget.php       # D: Doughnut — sales by customer (filter: country)
 │   └── TemporalSalesWidget.php     # E: Line — sales over time (filter: year)
 └── Providers/Filament/
     └── AdminPanelProvider.php      # Panel config, widget registration
@@ -69,14 +68,21 @@ app/Filament/
 
 ## Widgets
 
-| Widget | Chart | Filter | Query Pattern |
-|--------|-------|--------|---------------|
+| Widget | Chart Type | Filter | Query Pattern |
+|--------|-----------|--------|---------------|
 | BiStatsOverview | KPI cards | — | Aggregates across all fact tables |
 | A. Best City Market | Bar | Country | `fact_market_sales` → `dim_customer` → group by city |
-| B. Highest Product Sales | Bar | Product Line | `fact_product_sales` → `dim_product` → group by product |
-| C. Best Office Support | Doughnut | — | `fact_support_sales` → `dim_office` → group by office |
-| D. Top Customer Revenue | Bar | Country | `fact_customer_sales` → `dim_customer` → group by customer |
+| B. Highest Product Sales | Pie | Product Line | `fact_product_sales` → `dim_product` → group by product |
+| C. Best Office Support | Horizontal Bar | — | `fact_support_sales` → `dim_office` → group by office |
+| D. Top Customer Revenue | Doughnut | Country | `fact_customer_sales` → `dim_customer` → group by customer |
 | E. Sales Volume Over Time | Line | Year | `fact_temporal_sales` → `dim_date` → group by year+month |
+
+All chart types are unique. All widgets are collapsible and full-width.
+
+## Data Coverage
+
+- **2025:** 12 orders (one per month) for year-over-year baseline
+- **2026:** 48 orders (3 per month, Jan–Dec) for seasonal trend analysis
 
 ## Tech Stack
 

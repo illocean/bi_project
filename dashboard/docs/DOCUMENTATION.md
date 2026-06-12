@@ -17,16 +17,19 @@ Before any visualization, the data must be structured for analysis. The project 
 - **Fact tables** hold measurable numbers (sales amounts, quantities)
 - **Dimension tables** hold descriptive attributes (who, what, where, when)
 
-```
-                    dim_customer
-                         │
-dim_product ─── fact_product_sales
-                         │
-dim_office ──── fact_support_sales ──── dim_employee
-                         │
-dim_customer ── fact_customer_sales
-                         │
-dim_date ────── fact_temporal_sales
+```mermaid
+erDiagram
+    dim_customer ||--o{ fact_market_sales : "customer_key"
+    dim_order ||--o{ fact_market_sales : "order_key"
+    dim_product ||--o{ fact_product_sales : "product_key"
+    dim_order ||--o{ fact_product_sales : "order_key"
+    dim_office ||--o{ fact_support_sales : "office_key"
+    dim_employee ||--o{ fact_support_sales : "employee_key"
+    dim_order ||--o{ fact_support_sales : "order_key"
+    dim_customer ||--o{ fact_customer_sales : "customer_key"
+    dim_order ||--o{ fact_customer_sales : "order_key"
+    dim_date ||--o{ fact_temporal_sales : "date_key"
+    dim_order ||--o{ fact_temporal_sales : "order_key"
 ```
 
 Every fact table's `salesAmount` is computed as `quantityOrdered × priceEach` during ETL. The surrogate keys (`customer_key`, `product_key`, etc.) replace natural keys for faster joins.
@@ -41,6 +44,8 @@ Raw operational data lives in `bi_products` (a classic OLTP schema with customer
 
 This one-time ETL creates a read-optimized analytical database separate from the operational one.
 
+**Data coverage:** 12 orders in 2025 (one per month) + 48 orders in 2026 (three per month, Jan–Dec) for rich seasonal and year-over-year trend analysis.
+
 ### 2.3 The Application Layer: Filament Widgets
 
 Each BI question maps to a Filament `ChartWidget` that:
@@ -48,7 +53,7 @@ Each BI question maps to a Filament `ChartWidget` that:
 2. Groups by a dimension attribute (city, product name, etc.)
 3. Aggregates with `SUM(salesAmount)`
 4. Returns Chart.js-compatible `labels` and `datasets` arrays
-5. Renders as an interactive chart (bar, line, or doughnut)
+5. Renders as an interactive chart (each with a unique chart type)
 
 The dashboard uses a `StatsOverviewWidget` for KPI cards at the top — quick at-a-glance metrics before the detailed charts.
 
@@ -94,7 +99,7 @@ This answers **what** sells best. Critical for:
 
 **How it works:** Joins `fact_product_sales` → `dim_product`, groups by `productName`, sums `salesAmount`. The product line filter lets you compare within categories (e.g., "Classic Cars" vs "Motorcycles").
 
-**Chart type:** Bar chart — ranked comparison of products.
+**Chart type:** Pie chart — shows each product's share of total sales.
 
 ---
 
@@ -110,7 +115,7 @@ This answers **who** drives sales internally. Important for:
 
 **How it works:** Joins `fact_support_sales` → `dim_office` (via `dim_employee`), groups by office city, sums `salesAmount`. The chain is: order → customer → sales rep → office.
 
-**Chart type:** Doughnut chart — shows proportional contribution of each office.
+**Chart type:** Horizontal bar chart — ranked office comparison with easy label reading.
 
 ---
 
@@ -122,11 +127,11 @@ This answers **who** the best customers are. Essential for:
 - VIP customer retention programs
 - Sales team focus (prioritize high-value accounts)
 - Customer segmentation (wholesale vs retail)
-- Churn prevention ( losing a top customer is costly)
+- Churn prevention (losing a top customer is costly)
 
 **How it works:** Joins `fact_customer_sales` → `dim_customer`, groups by `customerName`, sums `salesAmount`. The country filter lets you analyze customer value by region.
 
-**Chart type:** Bar chart — ranked comparison of customer revenue.
+**Chart type:** Doughnut chart — shows proportional customer contribution.
 
 ---
 
@@ -142,7 +147,7 @@ This answers **when** sales peaked. Vital for:
 
 **How it works:** Joins `fact_temporal_sales` → `dim_date`, groups by `year` + `month_name`, sums `salesAmount`. The year filter lets you focus on specific periods.
 
-**Chart type:** Line chart with fill — shows the trend over time, with area filled to emphasize volume.
+**Chart type:** Line chart with fill — shows the trend over time, with area filled to emphasize volume. Data spans Jan 2025 through Dec 2026.
 
 ---
 
@@ -154,37 +159,37 @@ block-beta
 
     block:kpis:4
         columns 4
-        Revenue["💰 Total Revenue\n$XX,XXX\n▁▂▃▄▅▆▇"]
-        Customers["👥 Total Customers\n5"]
-        TopProd["📦 Top Product\nProduct Name\n$X,XXX revenue"]
-        BestCity["📍 Best Market\nCity Name\nHighest sales city"]
+        Revenue["Total Revenue\n$XX,XXX"]
+        Customers["Total Customers\n5"]
+        TopProd["Top Product\nProduct Name"]
+        BestCity["Best Market\nCity Name"]
     end
 
     space:4
 
     block:chartA:4
         columns 1
-        A["📊 A. Best Market by City\n[Country ▾]\nBar Chart — sales grouped by city"]
+        A["A. Best Market by City\n[Country ▾]\nBar Chart — sales grouped by city"]
     end
 
     block:chartB:4
         columns 1
-        B["📊 B. Highest Sales by Product\n[Product Line ▾]\nBar Chart — sales grouped by product"]
+        B["B. Highest Sales by Product\n[Product Line ▾]\nPie Chart — product share of total sales"]
     end
 
     block:chartC:4
         columns 1
-        C["🍩 C. Best Office Sales Support\nDoughnut Chart — sales by office"]
+        C["C. Best Office Sales Support\nHorizontal Bar — ranked office comparison"]
     end
 
     block:chartD:4
         columns 1
-        D["📊 D. Top Customer Revenue\n[Country ▾]\nBar Chart — sales grouped by customer"]
+        D["D. Top Customer Revenue\n[Country ▾]\nDoughnut Chart — customer revenue proportions"]
     end
 
     block:chartE:4
         columns 1
-        E["📈 E. Sales Volume Over Time\n[Year ▾]\nLine Chart — sales trend by month"]
+        E["E. Sales Volume Over Time\n[Year ▾]\nLine Chart — Jan 2025 to Dec 2026 trend"]
     end
 
     style Revenue fill:#10b981,color:#fff
@@ -208,10 +213,10 @@ block-beta
 | `Dashboard.php` | Customizes the dashboard page layout and adds year filter |
 | `BiStatsOverviewWidget.php` | Computes and displays 4 KPI summary cards |
 | `BestCityMarketWidget.php` | Bar chart — sales grouped by city, filterable by country |
-| `HighestProductSalesWidget.php` | Bar chart — sales grouped by product, filterable by product line |
-| `BestOfficeSupportWidget.php` | Doughnut chart — sales grouped by office location |
-| `TopCustomerWidget.php` | Bar chart — sales grouped by customer, filterable by country |
-| `TemporalSalesWidget.php` | Line chart — sales over time, filterable by year |
+| `HighestProductSalesWidget.php` | Pie chart — sales share by product, filterable by product line |
+| `BestOfficeSupportWidget.php` | Horizontal bar — sales grouped by office location |
+| `TopCustomerWidget.php` | Doughnut chart — sales share by customer, filterable by country |
+| `TemporalSalesWidget.php` | Line chart — sales trend over 24 months, filterable by year |
 
 ---
 
@@ -243,8 +248,9 @@ When a user selects "USA" in Widget A's country filter:
 
 ```bash
 # Re-import data if needed
-mysql -u root -p1234 < project.sql
-mysql -u root -p1234 < populate_bi_project.sql
+mysql -u root -p1234 < ETL/products.sql
+mysql -u root -p1234 < ETL/project.sql
+mysql -u root -p1234 < ETL/populate_bi_project.sql
 
 # Clear caches
 php artisan cache:clear && php artisan config:clear && php artisan view:clear

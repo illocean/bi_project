@@ -11,6 +11,14 @@ Extract, Transform, Load scripts that build the `bi_project` star schema from th
 | `populate_bi_project.sql` | ETL script that populates `bi_project` from `bi_products` |
 | `a.sql` through `e.sql` | Individual ETL scripts for each analytical question (development use) |
 
+## Source Data Scope
+
+- **2025:** 12 orders (one per month) — year-over-year baseline
+- **2026:** 48 orders (3 per month, Jan–Dec) — seasonal trend analysis
+- **Customers:** 5 across France, USA, Australia, Norway
+- **Products:** 10 across Classic Cars, Motorcycles, Planes, Laptops
+- **Offices:** 2 (San Francisco, Boston)
+
 ## Database Schemas
 
 ### Source: `bi_products` (OLTP)
