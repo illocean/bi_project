@@ -11,10 +11,10 @@ flowchart LR
     C --> D[Interactive Charts<br>+ KPI Cards]
 ```
 
-| Directory | Purpose |
-|-----------|---------|
-| `ETL/` | Source data, star schema DDL, and ETL scripts |
-| `dashboard/` | Laravel + Filament v5 visualization layer |
+| Directory | Purpose | Documentation |
+|-----------|---------|---------------|
+| `ETL/` | Source data, star schema DDL, and ETL scripts | [ETL/README.md](ETL/README.md) |
+| `dashboard/` | Laravel + Filament v5 visualization layer | [dashboard/README.md](dashboard/README.md) |
 
 ## The Five BI Questions
 
