@@ -53,7 +53,7 @@ php artisan serve
 
 - **Database:** MySQL (star schema with 6 dimension + 5 fact tables)
 - **Backend:** Laravel 12 + PHP 8.2
-- **Frontend:** Filament v5 + Livewire + Chart.js + Alpine.js
+- **Frontend:** Filament v4 + Livewire + Chart.js + Alpine.js
 - **Source Data:** ClassicModels sample dataset (customers, orders, products, offices)
 
 ## Prerequisites
@@ -61,3 +61,7 @@ php artisan serve
 - XAMPP (Apache + MySQL) or equivalent
 - PHP 8.2+ with `intl` and `zip` extensions
 - Composer 2.x
+
+## Contributors
+
+- **Phillip** — Project Lead & Developer

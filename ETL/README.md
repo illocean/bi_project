@@ -99,3 +99,7 @@ mysql -u root -p1234 < populate_bi_project.sql
 - **`salesAmount`** is computed as `quantityOrdered × priceEach` during ETL, not at query time
 - **`date_key`** uses `YYYYMMDD` integer format for efficient date dimension lookups
 - **Separate fact tables** per analytical question optimize each query path
+
+## Contributors
+
+- **Phillip** — Project Lead & Developer

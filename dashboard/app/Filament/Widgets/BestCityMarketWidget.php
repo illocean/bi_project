@@ -2,11 +2,14 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasDashboardFilters;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
 class BestCityMarketWidget extends ChartWidget
 {
+    use HasDashboardFilters;
+
     protected ?string $heading = 'A. Best Market for Sales (City)';
     protected static ?int $sort = 1;
     protected string $color = 'primary';
@@ -30,15 +33,29 @@ class BestCityMarketWidget extends ChartWidget
 
     protected function getData(): array
     {
+        $dashboardFilters = $this->getDashboardFilters();
+
+        $country = $dashboardFilters['country'] ?? ($this->filter ?? '');
+        $state = $dashboardFilters['state'] ?? '';
+        $city = $dashboardFilters['city'] ?? '';
+
         $query = DB::connection('mysql')
             ->table('fact_market_sales')
             ->join('dim_customer', 'fact_market_sales.customer_key', '=', 'dim_customer.customer_key')
-            ->select('dim_customer.city', DB::raw('SUM(fact_market_sales.salesAmount) as total_sales'))
-            ->groupBy('dim_customer.city')
+            ->select('dim_customer.city', 'dim_customer.state', 'dim_customer.country', DB::raw('SUM(fact_market_sales.salesAmount) as total_sales'))
+            ->groupBy('dim_customer.city', 'dim_customer.state', 'dim_customer.country')
             ->orderByDesc('total_sales');
 
-        if ($this->filter !== '' && $this->filter !== null) {
-            $query->where('dim_customer.country', $this->filter);
+        if ($country !== '' && $country !== null) {
+            $query->where('dim_customer.country', $country);
+        }
+
+        if ($state !== '' && $state !== null) {
+            $query->where('dim_customer.state', $state);
+        }
+
+        if ($city !== '' && $city !== null) {
+            $query->where('dim_customer.city', $city);
         }
 
         $data = $query->get();

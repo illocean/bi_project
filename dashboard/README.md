@@ -86,7 +86,7 @@ All chart types are unique. All widgets are collapsible and full-width.
 
 ## Tech Stack
 
-- Laravel 12 + Filament v5
+- Laravel 12 + Filament v4
 - Livewire (reactive filters)
 - Chart.js (visualizations)
 - MySQL (`bi_project` star schema)
@@ -94,3 +94,7 @@ All chart types are unique. All widgets are collapsible and full-width.
 ## Documentation
 
 See `docs/DOCUMENTATION.md` for comprehensive documentation including BI concepts, data flow, and architectural decisions.
+
+## Contributors
+
+- **Phillip** — Project Lead & Developer
