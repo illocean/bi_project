@@ -10,7 +10,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Widgets\BiStatsOverviewWidget;
 use App\Filament\Widgets\BestCityMarketWidget;
 use App\Filament\Widgets\HighestProductSalesWidget;
 use App\Filament\Widgets\BestOfficeSupportWidget;
@@ -42,7 +41,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                BiStatsOverviewWidget::class,
                 BestCityMarketWidget::class,
                 HighestProductSalesWidget::class,
                 BestOfficeSupportWidget::class,
